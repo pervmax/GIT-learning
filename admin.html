@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Admin Dashboard</title>
+  <link rel="icon" href="logo.jpg">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background-color: #f5f1ed;
+      color: #1a1a1a;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* Header Section */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 0.625rem;
+      border: 1px solid #e0d7ce;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    }
+
+    .logo-placeholder {
+      width: 80px;
+      height: 80px;
+      background-color: #ede7e1;
+      border: 2px dashed #d4a373;
+      border-radius: 0.625rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #7c4e2c;
+      font-weight: 600;
+      text-align: center;
+      flex-shrink: 0;
+      font-size: 0.875rem;
+    }
+
+    .header-content h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1a1a1a;
+      margin-bottom: 0.25rem;
+    }
+
+    .header-content p {
+      color: #6b6b6b;
+      font-size: 0.95rem;
+    }
+
+    /* Filter Section */
+    .filter-section {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+
+    .filter-btn {
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background-color: #ede7e1;
+      color: #1a1a1a;
+    }
+
+    .filter-btn:hover:not(.active) {
+      background-color: #e0d7ce;
+    }
+
+    .filter-btn.active {
+      background-color: #7c4e2c;
+      color: white;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 0.625rem;
+      border: 1px solid #e0d7ce;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: box-shadow 0.3s ease;
+    }
+
+    .stat-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .stat-label {
+      color: #6b6b6b;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 700;
+      color: #7c4e2c;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-unit {
+      font-size: 0.75rem;
+      color: #6b6b6b;
+    }
+
+    /* Feedback Grid */
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .feedback-section h2 {
+      font-size: 1.3rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .feedback-badge {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .feedback-badge.positive {
+      background-color: #16a34a;
+    }
+
+    .feedback-badge.negative {
+      background-color: #f59e0b;
+    }
+
+    .feedback-count {
+      margin-left: auto;
+      font-size: 0.85rem;
+      color: #6b6b6b;
+      font-weight: 400;
+    }
+
+    .feedback-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .feedback-card {
+      background: white;
+      padding: 1rem;
+      border-radius: 0.625rem;
+      border: 1px solid #e0d7ce;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+    }
+
+    .feedback-card:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+    }
+
+    .feedback-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .feedback-text {
+      font-size: 0.95rem;
+      color: #1a1a1a;
+      flex: 1;
+      line-height: 1.5;
+    }
+
+    .feedback-badge-tag {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .feedback-badge-tag.positive {
+      background-color: #dcfce7;
+      color: #166534;
+    }
+
+    .feedback-badge-tag.negative {
+      background-color: #fef3c7;
+      color: #92400e;
+    }
+
+    .feedback-count-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      background-color: #e0d7ce;
+      color: #7c4e2c;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .feedback-date {
+      font-size: 0.8rem;
+      color: #6b6b6b;
+      margin-top: 0.5rem;
+    }
+
+    /* Summary Button */
+    .summary-btn {
+      padding: 0.5rem 1.5rem;
+      background-color: #7c4e2c;
+      color: white;
+      border: none;
+      border-radius: 0.625rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-left: auto;
+    }
+
+    .summary-btn:hover {
+      background-color: #5f3a21;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 0.625rem;
+      padding: 2rem;
+      max-width: 700px;
+      width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #e0d7ce;
+      padding-bottom: 1rem;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      color: #7c4e2c;
+      margin: 0;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #6b6b6b;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-btn:hover {
+      color: #1a1a1a;
+    }
+
+    .summary-content {
+      color: #333;
+      line-height: 1.8;
+      font-size: 0.95rem;
+    }
+
+    .summary-loading {
+      text-align: center;
+      padding: 2rem;
+      color: #6b6b6b;
+    }
+
+    .summary-loading::after {
+      content: '';
+      display: inline-block;
+      animation: spin 1s linear infinite;
+      margin-left: 0.5rem;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .container {
+        padding: 1rem;
+      }
+
+      .header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .header-content h1 {
+        font-size: 1.5rem;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      }
+
+      .stat-value {
+        font-size: 2rem;
+      }
+
+      .feedback-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-section {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-placeholder"><img src="logo.jpg" alt="Cafe Logo"
+          style="width: 100%; height: 100%; object-fit: contain;"></div>
+      <div class="header-content">
+        <h1>Restaurant Dashboard</h1>
+        <p>Admin Dashboard for Feedback Management</p>
+      </div>
+    </div>
+
+    <!-- Filter Section -->
+    <div class="filter-section">
+      <button class="filter-btn active" onclick="setFilter(this, 'today')">Today</button>
+      <button class="filter-btn" onclick="setFilter(this, 'week')">Last 7 Days</button>
+      <button class="filter-btn" onclick="setFilter(this, 'month')">Last 30 Days</button>
+      <button class="summary-btn" onclick="openSummaryModal()">📋 AI Summary</button>
+    </div>
+
+    <!-- Stats Section -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Total Feedback Count</div>
+        <div class="stat-value" id="totalFeedback">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Food Rating</div>
+        <div class="stat-value" id="avgFood">0</div>
+        <div class="stat-unit">out of 5</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Service Rating</div>
+        <div class="stat-value" id="avgService">0</div>
+        <div class="stat-unit">out of 5</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Ambiance Rating</div>
+        <div class="stat-value" id="avgAmbiance">0</div>
+        <div class="stat-unit">out of 5</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Average Cleanliness Rating</div>
+        <div class="stat-value" id="avgCleanliness">0</div>
+        <div class="stat-unit">out of 5</div>
+      </div>
+    </div>
+
+    <!-- Feedback Sections -->
+    <div class="feedback-grid">
+      <!-- Positive Feedback -->
+      <div class="feedback-section">
+        <h2>
+          <span class="feedback-badge positive"></span>
+          Positive Feedback
+          <span class="feedback-count" id="posCount">0 items</span>
+        </h2>
+        <div class="feedback-list" id="positiveFeedback">
+          <!-- Positive feedback cards will be dynamically generated -->
+        </div>
+      </div>
+
+      <!-- Negative Feedback -->
+      <div class="feedback-section">
+        <h2>
+          <span class="feedback-badge negative"></span>
+          Negative Feedback
+          <span class="feedback-count" id="negCount">0 items</span>
+        </h2>
+        <div class="feedback-list" id="negativeFeedback">
+          <!-- Negative feedback cards will be dynamically generated -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary Modal -->
+    <div class="modal" id="summaryModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>AI-Generated Summary</h2>
+          <button class="close-btn" onclick="closeSummaryModal()">×</button>
+        </div>
+        <div class="summary-content" id="summaryContent">
+          <p class="summary-loading">Loading summary...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variables
+    let allFeedback = [];
+    let currentFilter = 'today';
+
+    // Normalize feedback for grouping similar messages
+    function normalizeForGrouping(text) {
+      if (!text || !text.trim()) return '';
+
+      // Convert to lowercase
+      let normalized = text.toLowerCase();
+
+      // Remove only ASCII punctuation, preserve Unicode characters (e.g., Devanagari)
+      normalized = normalized.replace(/[^\p{L}\p{N}\s]/gu, ' ');
+
+      // Collapse repeated characters (goooood -> good)
+      normalized = normalized.replace(/(.)\1{2,}/g, '$1');
+
+      // Trim and collapse multiple spaces
+      normalized = normalized.trim().replace(/\s+/g, ' ');
+
+      return normalized;
+    }
+
+    // Extract semantic keywords for grouping
+    function extractSemanticKey(text) {
+      const normalized = normalizeForGrouping(text);
+      if (!normalized) return '';
+
+      // Stop words to remove (common words that don't add meaning)
+      const stopWords = [
+        'the', 'a', 'an', 'is', 'was', 'are', 'been', 'be', 'have', 'has', 'had',
+        'do', 'does', 'did', 'will', 'would', 'could', 'should', 'may', 'might',
+        'can', 'very', 'really', 'super', 'so', 'extremely', 'quite', 'pretty',
+        'totally', 'absolutely', 'just', 'and', 'or', 'but', 'in', 'on', 'at',
+        'to', 'for', 'of', 'from', 'with', 'by', 'as', 'it', 'this', 'that',
+        'these', 'those', 'my', 'your', 'his', 'her', 'our', 'their'
+      ];
+
+      // Split into words
+      const words = normalized.split(/\s+/);
+
+      // Keep meaningful words (not stop words and longer than 2 characters)
+      const semanticWords = words.filter(word => {
+        if (stopWords.includes(word)) return false;
+        if (word.length <= 2) return false;
+        return true;
+      });
+
+      // Remove duplicates and sort alphabetically for consistency
+      const uniqueWords = [...new Set(semanticWords)].sort();
+
+      return uniqueWords.join(' ');
+    }
+
+    // Group similar feedback entries by semantic meaning
+    function groupFeedback(feedbackList) {
+      const groups = new Map();
+
+      feedbackList.forEach(entry => {
+        // Get text from comments or ratings
+        let text = '';
+        if (entry.comments && entry.comments.trim()) {
+          text = entry.comments;
+        } else if (entry.ratings) {
+          const { food = 0, service = 0, ambiance = 0, cleanliness = 0 } = entry.ratings;
+          text = `Food: ${food}/5, Service: ${service}/5, Ambiance: ${ambiance}/5, Cleanliness: ${cleanliness}/5`;
+        }
+
+        // Extract semantic key for grouping
+        const semanticKey = extractSemanticKey(text);
+
+        if (!semanticKey) return;
+
+        // Group by semantic key
+        if (!groups.has(semanticKey)) {
+          groups.set(semanticKey, {
+            originalText: text, // Keep first original text for display
+            semanticKey: semanticKey,
+            count: 0,
+            entries: [],
+            isPositive: isPositive(entry)
+          });
+        }
+
+        const group = groups.get(semanticKey);
+        group.count++;
+        group.entries.push(entry);
+      });
+
+      // Convert map to array and sort by count (descending)
+      return Array.from(groups.values()).sort((a, b) => b.count - a.count);
+    }
+
+    function analyzeSentiment(text) {
+      const processed = preprocess(text);
+
+      // Sort keywords by length (longest first) to match more specific phrases first
+      const sortedNegative = [...negativeKeywords].sort((a, b) => b.length - a.length);
+      const sortedPositive = [...positiveKeywords].sort((a, b) => b.length - a.length);
+
+      let pos = 0;
+      let neg = 0;
+
+      // Track matched regions to avoid double-counting overlapping keywords
+      const matchedRegions = [];
+
+      // Check negative keywords first (prioritized)
+      sortedNegative.forEach(word => {
+        let index = processed.indexOf(word);
+        while (index !== -1) {
+          const wordEnd = index + word.length;
+          // Check if this region was already matched
+          const alreadyMatched = matchedRegions.some(region =>
+            (index >= region.start && index < region.end) ||
+            (wordEnd > region.start && wordEnd <= region.end) ||
+            (index <= region.start && wordEnd >= region.end)
+          );
+          if (!alreadyMatched) {
+            neg++;
+            matchedRegions.push({ start: index, end: wordEnd });
+          }
+          index = processed.indexOf(word, index + 1);
+        }
+      });
+
+      // Check positive keywords, avoiding already matched regions
+      sortedPositive.forEach(word => {
+        let index = processed.indexOf(word);
+        while (index !== -1) {
+          const wordEnd = index + word.length;
+          // Check if this region overlaps with already matched regions
+          const alreadyMatched = matchedRegions.some(region =>
+            (index >= region.start && index < region.end) ||
+            (wordEnd > region.start && wordEnd <= region.end) ||
+            (index <= region.start && wordEnd >= region.end)
+          );
+          if (!alreadyMatched) {
+            pos++;
+            matchedRegions.push({ start: index, end: wordEnd });
+          }
+          index = processed.indexOf(word, index + 1);
+        }
+      });
+
+      return pos >= neg ? 'positive' : 'negative';
+    }
+
+    // Load feedback from backend API
+    async function loadFeedback() {
+      try {
+        const response = await fetch('http://localhost:8000/get_feedback');
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+          allFeedback = result.feedback || [];
+          console.log(`Loaded ${allFeedback.length} feedback entries from backend`);
+        } else {
+          console.error('Failed to load feedback:', result);
+          allFeedback = [];
+        }
+      } catch (e) {
+        console.error('Error loading feedback from backend:', e);
+        alert('Failed to load feedback data. Please ensure the backend server is running.');
+        allFeedback = [];
+      }
+
+      renderDashboard();
+    }
+
+    // Get timestamp from entry (supports both timestamp and timestampISO)
+    function getTimestamp(entry) {
+      return entry.timestamp || entry.timestampISO;
+    }
+
+    // Filter feedback by date period
+    function filterByDate(feedback, period) {
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+      return feedback.filter(entry => {
+        const timestamp = getTimestamp(entry);
+        if (!timestamp) return false;
+        const entryDate = new Date(timestamp);
+        const entryDay = new Date(entryDate.getFullYear(), entryDate.getMonth(), entryDate.getDate());
+
+        if (period === 'today') {
+          return entryDay.getTime() === today.getTime();
+        } else if (period === 'week') {
+          const weekAgo = new Date(today);
+          weekAgo.setDate(weekAgo.getDate() - 7);
+          return entryDay >= weekAgo;
+        } else if (period === 'month') {
+          const monthAgo = new Date(today);
+          monthAgo.setDate(monthAgo.getDate() - 30);
+          return entryDay >= monthAgo;
+        }
+        return true;
+      });
+    }
+
+    // Calculate average rating for a specific field
+    function calculateAverage(feedback, field) {
+      const values = feedback
+        .map(entry => (entry.ratings ? entry.ratings[field] : undefined))
+        .filter(v => typeof v === 'number');
+      if (!values.length) return 0;
+      const sum = values.reduce((acc, v) => acc + v, 0);
+      return (sum / values.length).toFixed(1);
+    }
+
+    // Determine if feedback is positive or negative with sentiment support
+    function isPositive(entry) {
+      // ALWAYS trust the backend's sentiment classification if available
+      if (entry.sentiment) {
+        return entry.sentiment === 'Positive';
+      }
+
+      // Fallback: Only use ratings if no sentiment provided (legacy data)
+      let avg = null;
+      if (entry.ratings) {
+        const { food = 0, service = 0, ambiance = 0, cleanliness = 0 } = entry.ratings;
+        avg = (food + service + ambiance + cleanliness) / 4;
+      }
+
+      if (Number.isFinite(avg)) return avg >= 3;
+      return false;
+    }
+
+    // Format date for display
+    function formatDate(timestamp) {
+      const date = new Date(timestamp);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      return `${year}-${month}-${day} ${hours}:${minutes}`;
+    }
+
+    // Create feedback card HTML
+    function createFeedbackCard(entry, isPos) {
+      const card = document.createElement('div');
+      card.className = 'feedback-card';
+
+      const feedbackType = isPos ? 'positive' : 'negative';
+      const feedbackLabel = isPos ? 'Positive' : 'Negative';
+
+      // Build rating breakdown text
+      let ratingText = '';
+      if (entry.comments && entry.comments.trim()) {
+        ratingText = entry.comments;
+      } else if (entry.ratings) {
+        const { food = 0, service = 0, ambiance = 0, cleanliness = 0 } = entry.ratings;
+        ratingText = `Food: ${food}/5, Service: ${service}/5, Ambiance: ${ambiance}/5, Cleanliness: ${cleanliness}/5`;
+      } else {
+        ratingText = 'No rating information available';
+      }
+
+      const timestamp = getTimestamp(entry);
+
+      const header = document.createElement('div');
+      header.className = 'feedback-header';
+      
+      const textP = document.createElement('p');
+      textP.className = 'feedback-text';
+      textP.textContent = ratingText; // Use textContent to preserve Unicode characters
+      
+      const badge = document.createElement('span');
+      badge.className = `feedback-badge-tag ${feedbackType}`;
+      badge.textContent = feedbackLabel;
+      
+      header.appendChild(textP);
+      header.appendChild(badge);
+      card.appendChild(header);
+      
+      const dateP = document.createElement('p');
+      dateP.className = 'feedback-date';
+      dateP.textContent = timestamp ? formatDate(timestamp) : 'N/A';
+      card.appendChild(dateP);
+
+      return card;
+    }
+
+    // Create a feedback card for grouped feedback
+    function createGroupedFeedbackCard(group) {
+      const card = document.createElement('div');
+      card.className = 'feedback-card';
+
+      const feedbackType = group.isPositive ? 'positive' : 'negative';
+      const feedbackLabel = group.isPositive ? 'Positive' : 'Negative';
+
+      // Use original text for display
+      const displayText = group.originalText;
+
+      // Get most recent timestamp from the group
+      const timestamps = group.entries
+        .map(e => getTimestamp(e))
+        .filter(t => t)
+        .sort((a, b) => new Date(b) - new Date(a));
+      const latestTimestamp = timestamps[0];
+
+      const header = document.createElement('div');
+      header.className = 'feedback-header';
+      
+      const textP = document.createElement('p');
+      textP.className = 'feedback-text';
+      textP.textContent = displayText; // Use textContent to preserve Unicode characters
+      
+      const rightDiv = document.createElement('div');
+      rightDiv.style.display = 'flex';
+      rightDiv.style.gap = '0.5rem';
+      rightDiv.style.alignItems = 'center';
+      
+      if (group.count > 1) {
+        const countBadge = document.createElement('span');
+        countBadge.className = 'feedback-count-badge';
+        countBadge.textContent = `×${group.count}`;
+        rightDiv.appendChild(countBadge);
+      }
+      
+      const sentimentBadge = document.createElement('span');
+      sentimentBadge.className = `feedback-badge-tag ${feedbackType}`;
+      sentimentBadge.textContent = feedbackLabel;
+      rightDiv.appendChild(sentimentBadge);
+      
+      header.appendChild(textP);
+      header.appendChild(rightDiv);
+      card.appendChild(header);
+      
+      const dateP = document.createElement('p');
+      dateP.className = 'feedback-date';
+      dateP.textContent = latestTimestamp ? formatDate(latestTimestamp) : 'N/A';
+      card.appendChild(dateP);
+
+
+      return card;
+    }
+
+    // Render the entire dashboard
+    function renderDashboard() {
+      // Filter feedback based on current filter
+      const filteredFeedback = filterByDate(allFeedback, currentFilter);
+
+      // Update stats
+      document.getElementById('totalFeedback').textContent = filteredFeedback.length;
+      document.getElementById('avgFood').textContent = calculateAverage(filteredFeedback, 'food');
+      document.getElementById('avgService').textContent = calculateAverage(filteredFeedback, 'service');
+      document.getElementById('avgAmbiance').textContent = calculateAverage(filteredFeedback, 'ambiance');
+      document.getElementById('avgCleanliness').textContent = calculateAverage(filteredFeedback, 'cleanliness');
+
+      // Separate positive and negative feedback
+      const positiveFeedback = filteredFeedback.filter(entry => isPositive(entry));
+      const negativeFeedback = filteredFeedback.filter(entry => !isPositive(entry));
+
+      // Update counts
+      document.getElementById('posCount').textContent = `${positiveFeedback.length} items`;
+      document.getElementById('negCount').textContent = `${negativeFeedback.length} items`;
+
+      // Group similar feedback
+      const groupedPositive = groupFeedback(positiveFeedback);
+      const groupedNegative = groupFeedback(negativeFeedback);
+
+      // Render positive feedback cards (grouped)
+      const positiveFeedbackContainer = document.getElementById('positiveFeedback');
+      positiveFeedbackContainer.innerHTML = '';
+      if (groupedPositive.length === 0) {
+        positiveFeedbackContainer.innerHTML = '<p style="color: #6b6b6b; padding: 1rem;">No positive feedback for this period.</p>';
+      } else {
+        groupedPositive.forEach(group => {
+          positiveFeedbackContainer.appendChild(createGroupedFeedbackCard(group));
+        });
+      }
+
+      // Render negative feedback cards (grouped)
+      const negativeFeedbackContainer = document.getElementById('negativeFeedback');
+      negativeFeedbackContainer.innerHTML = '';
+      if (groupedNegative.length === 0) {
+        negativeFeedbackContainer.innerHTML = '<p style="color: #6b6b6b; padding: 1rem;">No negative feedback for this period.</p>';
+      } else {
+        groupedNegative.forEach(group => {
+          negativeFeedbackContainer.appendChild(createGroupedFeedbackCard(group));
+        });
+      }
+    }
+
+    // Set filter and re-render
+    function setFilter(button, period) {
+      // Remove active class from all buttons
+      document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      // Add active class to clicked button
+      button.classList.add('active');
+
+      // Update current filter and re-render
+      currentFilter = period;
+      renderDashboard();
+    }
+
+    // Summary Modal Functions
+    function openSummaryModal() {
+      const modal = document.getElementById('summaryModal');
+      modal.classList.add('show');
+      generateSummary();
+    }
+
+    function closeSummaryModal() {
+      const modal = document.getElementById('summaryModal');
+      modal.classList.remove('show');
+    }
+
+    async function generateSummary() {
+      const summaryContent = document.getElementById('summaryContent');
+      
+      try {
+        // Filter feedback based on current period
+        const filteredFeedback = filterByDate(allFeedback, currentFilter);
+        
+        if (filteredFeedback.length === 0) {
+          summaryContent.innerHTML = '<p>No feedback available for this period to summarize.</p>';
+          return;
+        }
+
+        // Prepare feedback data for API
+        const feedbackText = filteredFeedback
+          .map(entry => {
+            const sentiment = entry.sentiment || 'Unknown';
+            const comments = entry.comments || 'No comments';
+            const ratings = entry.ratings ? `(Food: ${entry.ratings.food}/5, Service: ${entry.ratings.service}/5, Ambiance: ${entry.ratings.ambiance}/5, Cleanliness: ${entry.ratings.cleanliness}/5)` : '';
+            return `${sentiment}: ${comments} ${ratings}`;
+          })
+          .join('\n');
+
+        // Send to backend API for summarization
+        const response = await fetch('http://localhost:8000/summarize_feedback', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            feedback: feedbackText,
+            count: filteredFeedback.length,
+            period: currentFilter
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const result = await response.json();
+        
+        // Format and display the summary
+        const summaryHTML = `
+          <div style="background: #f9f7f2; padding: 1rem; border-radius: 0.625rem; border-left: 4px solid #7c4e2c;">
+            <h3 style="color: #7c4e2c; margin-top: 0;">Summary for ${currentFilter === 'today' ? 'Today' : currentFilter === 'week' ? 'Last 7 Days' : 'Last 30 Days'}</h3>
+            <p><strong>Total Feedback Analyzed:</strong> ${filteredFeedback.length}</p>
+            <div style="margin-top: 1rem; line-height: 1.8; color: #333;">
+              ${result.summary.split('\n').map(line => line.trim() ? `<p>${line}</p>` : '').join('')}
+            </div>
+          </div>
+        `;
+        
+        summaryContent.innerHTML = summaryHTML;
+      } catch (err) {
+        console.error('Error generating summary:', err);
+        summaryContent.innerHTML = `<p style="color: #d32f2f;">Failed to generate summary. Ensure the backend server is running.</p>`;
+      }
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+      const modal = document.getElementById('summaryModal');
+      if (event.target === modal) {
+        closeSummaryModal();
+      }
+    });
+
+
+    // Initialize dashboard on page load
+    window.addEventListener('DOMContentLoaded', loadFeedback);
+  </script>
+</body>
+
+</html>
